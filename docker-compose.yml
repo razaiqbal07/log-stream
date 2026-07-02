@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  # Service 1: The PostgreSQL Database
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: logstream-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: logstream
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Keeps your database data safe even if the container stops
+    networks:
+      - logstream-network
+
+  # Service 2: Your Go Ingestion Server
+  ingestion-server:
+    build:
+      context: ./server # Tells Docker Compose where to find the Dockerfile
+      dockerfile: Dockerfile
+    container_name: logstream-server
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres-db # Match the service name above!
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=secret
+      - DB_NAME=logstream
+    depends_on:
+      - postgres-db # Tells Docker to start the database BEFORE trying to start the server
+    networks:
+      - logstream-network
+
+volumes:
+  pgdata:
+
+networks:
+  logstream-network:
+    driver: bridge

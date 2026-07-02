@@ -1,16 +1,38 @@
 package main
 
 import (
-	"fmt"
-	"logstream/server/internal/handlers"
+	"encoding/json"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/razaiqbal07/log-stream/server/internal/database"
+	"github.com/razaiqbal07/log-stream/server/internal/handler"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		// log.Fatal("Error loading .env file")
+	}
+	PORT := os.Getenv("PORT")
+	db := database.Connect()
+
+	_ = db
+
 	mux := http.NewServeMux()
+	mux.HandleFunc("/api/health", health)
 
-	mux.HandleFunc("/v1/ingest", handlers.HandleIngest)
+	/** Routes*/
+	mux.HandleFunc("POST /api/logs", handler.LogCreate)
+	mux.HandleFunc("GET /api/logs", handler.LogRead)
 
-	fmt.Println("🚀 LogStream Ingestion Engine starting on port 8080...")
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(PORT, mux)
+}
+
+func health(w http.ResponseWriter, r *http.Request) {
+	response := map[string]string{"message": "Server running..."}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
