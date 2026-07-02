@@ -17,3 +17,5 @@ Thumbs.db
 # IDE settings
 .vscode/
 .idea/
+
+**/.env
