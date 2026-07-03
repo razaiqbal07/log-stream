@@ -29,5 +29,24 @@ func (s *LogService) CreateLog(log model.Log) {
 }
 
 func (s *LogService) GetLogs() []model.Log {
-	return s.logs
+	rows, err := s.db.Query("SELECT service, type, message FROM logs")
+	if err != nil {
+		// return nil
+	}
+	defer rows.Close()
+
+	var logs []model.Log
+
+	for rows.Next() {
+		var log model.Log
+
+		err := rows.Scan(&log.Service, &log.Type, &log.Message)
+		if err != nil {
+			// return nil, err
+		}
+
+		logs = append(logs, log)
+	}
+
+	return logs
 }

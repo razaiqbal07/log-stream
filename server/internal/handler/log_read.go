@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-func LogRead(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) LogRead(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	logs := logService.GetLogs()
+	logs := h.logService.GetLogs()
 
 	json.NewEncoder(w).Encode(logs)
 }

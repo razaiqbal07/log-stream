@@ -27,7 +27,7 @@ func main() {
 
 	/** Routes*/
 	mux.HandleFunc("POST /api/logs", logHandler.LogCreate)
-	mux.HandleFunc("GET /api/logs", handler.LogRead)
+	mux.HandleFunc("GET /api/logs", logHandler.LogRead)
 
 	http.ListenAndServe(PORT, mux)
 }
