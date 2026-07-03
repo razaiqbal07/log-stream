@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/razaiqbal07/log-stream/server/internal/database"
 	"github.com/razaiqbal07/log-stream/server/internal/handler"
+	"github.com/razaiqbal07/log-stream/server/internal/service"
 )
 
 func main() {
@@ -18,13 +19,14 @@ func main() {
 	PORT := os.Getenv("PORT")
 	db := database.Connect()
 
-	_ = db
+	logService := service.NewLogService(db)
+	logHandler := handler.NewLogHandler(logService)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/health", health)
 
 	/** Routes*/
-	mux.HandleFunc("POST /api/logs", handler.LogCreate)
+	mux.HandleFunc("POST /api/logs", logHandler.LogCreate)
 	mux.HandleFunc("GET /api/logs", handler.LogRead)
 
 	http.ListenAndServe(PORT, mux)
