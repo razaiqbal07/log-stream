@@ -6,9 +6,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/razaiqbal07/log-stream/server/internal/database"
 	"github.com/razaiqbal07/log-stream/server/internal/handler"
-	"github.com/razaiqbal07/log-stream/server/internal/repository"
+	"github.com/razaiqbal07/log-stream/server/internal/repository/inmemory"
 	"github.com/razaiqbal07/log-stream/server/internal/service"
 )
 
@@ -18,10 +17,11 @@ func main() {
 		// log.Fatal("Error loading .env file")
 	}
 	PORT := os.Getenv("PORT")
-	db := database.Connect()
+	// db := database.Connect()
 
-	logRepository := repository.NewLogRepository(db)
-	logService := service.NewLogService(logRepository)
+	// logRepository := postgres.NewLogRepository(db)
+	lr := inmemory.NewLogRepository()
+	logService := service.NewLogService(lr)
 	logHandler := handler.NewLogHandler(logService)
 
 	mux := http.NewServeMux()

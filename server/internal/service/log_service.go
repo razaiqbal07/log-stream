@@ -9,10 +9,10 @@ import (
 
 type LogService struct {
 	logs          []model.Log
-	logRepository *repository.LogRepository
+	logRepository repository.LogRepository
 }
 
-func NewLogService(logRepository *repository.LogRepository) *LogService {
+func NewLogService(logRepository repository.LogRepository) *LogService {
 	return &LogService{
 		logRepository: logRepository,
 		logs:          make([]model.Log, 0),
